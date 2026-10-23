@@ -1,0 +1,5 @@
+dados/csv/
+saida/
+__pycache__/
+.env
+.venv/

@@ -1,0 +1,42 @@
+# Roda o pipeline completo num MySQL descartável a cada push/PR.
+# Se uma consulta SQL quebrar, o GitHub Actions avisa antes do merge.
+name: pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: senha123
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -psenha123"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_PASSWORD: senha123
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python dados/gerar_dados.py
+      - run: python scripts/carregar_mysql.py
+      - run: python scripts/testar_consultas.py
+      - run: python scripts/alertas.py
+      - run: python scripts/dashboard.py
+      - run: python scripts/exportar_planilha.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: saidas
+          path: saida/
