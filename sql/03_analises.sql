@@ -230,3 +230,13 @@ JOIN convenios cv        ON cv.id = a.convenio_id
 LEFT JOIN itens_conta i  ON i.id = g.item_id
 LEFT JOIN procedimentos p ON p.codigo = i.procedimento_codigo
 ORDER BY g.id;
+
+-- [ticket_medio_por_tipo]
+-- Valor médio das contas por tipo de atendimento.
+SELECT a.tipo,
+       COUNT(*)                       AS contas,
+       ROUND(AVG(c.valor_cobrado), 2) AS ticket_medio
+FROM contas c
+JOIN atendimentos a ON a.id = c.atendimento_id
+GROUP BY a.tipo
+ORDER BY ticket_medio DESC;
