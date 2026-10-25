@@ -26,7 +26,7 @@ WHERE c.status = 'PAGA';
 -- [funil]
 -- Funil do faturamento: onde as contas estão "travando" entre a alta e o pagamento.
 SELECT 1 AS ordem, 'Atendimentos com alta' AS etapa, COUNT(*) AS qtd
-FROM atendimento WHERE data_alta <= @hoje
+FROM atendimentos WHERE data_alta <= @hoje
 UNION ALL
 SELECT 2, 'Contas fechadas', COUNT(*) FROM contas WHERE status IN ('FECHADA', 'ENVIADA', 'PAGA')
 UNION ALL
