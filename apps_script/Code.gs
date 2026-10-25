@@ -235,7 +235,8 @@ function chamarClaude_(sistema, conteudo, esperaJson = true) {
     headers: { 'x-api-key': chave, 'anthropic-version': '2023-06-01' },
     payload: JSON.stringify({
       model: MODELO,
-      max_tokens: 4096,
+      max_tokens: 16000,                  // o raciocínio interno do modelo também conta neste limite
+      output_config: { effort: 'low' },   // classificação é tarefa simples: menos raciocínio, mais rápido
       system: sistema,
       messages: [{ role: 'user', content: conteudo }],
     }),
@@ -246,7 +247,16 @@ function chamarClaude_(sistema, conteudo, esperaJson = true) {
     const resp = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', opcoes);
     const status = resp.getResponseCode();
     if (status === 200) {
-      const texto = JSON.parse(resp.getContentText()).content[0].text.trim();
+      // A resposta pode trazer blocos de raciocínio ("thinking") antes do texto: juntamos só os de texto
+      const corpo = JSON.parse(resp.getContentText());
+      const texto = (corpo.content || [])
+        .filter(b => b.type === 'text')
+        .map(b => b.text)
+        .join('')
+        .trim();
+      if (!texto) {
+        throw new Error(`Resposta sem texto (stop_reason: ${corpo.stop_reason}). Tente de novo.`);
+      }
       if (!esperaJson) return texto;
       const json = texto.slice(texto.indexOf('['), texto.lastIndexOf(']') + 1);  // ignora texto extra
       return JSON.parse(json);

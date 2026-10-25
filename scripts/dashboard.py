@@ -111,7 +111,9 @@ MODELO = r"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Auditoria de Glosas</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.2/plotly.min.js"></script>
+<!-- Plotly vem da internet (CDN). Se o primeiro endereço falhar, tenta o segundo. -->
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script>window.Plotly || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.2/plotly.min.js"><\/script>')</script>
 <style>
   :root {
     --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
@@ -272,8 +274,15 @@ function desenhar() {
   }], base({xaxis: {visible: false, range: [0, Math.max(...D.prazo.pct) * 1.3 || 1]}}), cfg);
 }
 
-desenhar();
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", desenhar);
+if (window.Plotly) {
+  desenhar();
+} else {
+  document.querySelectorAll(".chart").forEach(el => {
+    el.innerHTML = '<p class="muted">Não foi possível carregar a biblioteca de gráficos (Plotly). ' +
+                   'Confira a conexão com a internet e recarregue a página.</p>';
+  });
+}
+if (window.Plotly) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", desenhar);
 </script>
 </body>
 </html>
