@@ -17,6 +17,9 @@ Projeto de estudo que simula o faturamento de um hospital e usa **SQL, um dashbo
 | O que corrigir agora? | **33 contas ainda não enviadas** já têm itens com erro (**R$ 26 mil em risco**) |
 | Onde está o gargalo? | **43 contas paradas** passaram do prazo de envio sem ser enviadas (**R$ 114 mil**) |
 | Por que usar IA? | **41%** das glosas chegam com código genérico ("G99 - outros"): o motivo está só no texto livre |
+| A IA acerta? | **100%** de acurácia (**100%** nas glosas G99) |
+<img width="1305" height="1058" alt="dashboard" src="https://github.com/user-attachments/assets/b153da01-4f99-4095-8393-3c2497c414ee" />
+
 
 ## Como funciona
 
